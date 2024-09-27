@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<div class="container rounded-2 pt-2 pb-4" style="background-color: white; width: 500px; margin-top: 100px;">
+    <h1 class="text-center">Admin Register</h1>
+    <form action="{{url_for('admin.admin_register')}}" method="POST">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="inputPassword5" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control"
+                aria-describedby="passwordHelpBlock" required>
+        </div>
+        <div class="mb-2">
+            <label for="inputPassword5" class="form-label">Unique Key</label>
+            <input type="password" id="uni_key" name="unique_key" class="form-control" aria-describedby="passwordHelpBlock"
+                required>
+        </div>
+        <div class='mb-3'>**Unique Key provided by management.</div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+</div>
+{% endblock%}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="pt-3" style="width: 600px; margin-left: 20px;">
+    <h1 style="color: white;">Welcome back, {{admin_name}} </h1>
+    <p style="color: white;">Here you can view your attendance, courses, and more.</p>
+    <a class="btn btn-secondary" href="{{ url_for('admin.add_student') }}">Add Student</a>
+
+    <a href="{{url_for('admin.logout')}}" class="btn btn-primary">Log out</a>
+    <div class="pt-3" style="width: 600px;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Roll Number</th>
+                    <th>Course</th>
+                    <th>Attendance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.roll_no }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.attendances|length }}</td>
+                        <td>
+                            <form action="{{ url_for('admin.remove_student', student_id=student.id) }}" method="POST" style="display: inline;">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

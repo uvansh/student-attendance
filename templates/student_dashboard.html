@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+
+<div class="pt-3" style="width: 600px; margin-left: 20px;">
+    <h1 style="color: white;">Welcome back, {{student.name}}</h1>
+    <p style="color: white;">Here you can view your attendance, courses, and more.</p>
+    <div class="btn btn-secondary mb-4" ><a style="text-decoration: none; color: white;" href="{{url_for('student.logout')}}">Log out</a></div>
+    <p style="color: white;">
+        {% if total_attendance >95 %} Rain can't touch you 🗿{% endif %}
+    </p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Course Name</th>
+                <th>Attendance (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ student.name }}</td>
+                <td>{{ student.course }}</td>
+                <td>{{ total_attendance }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+    <form action="{{url_for('student.mark_attendance')}}" method="POST">
+        <button type="submit" class="btn btn-primary" {% if already_marked %} disabled {% endif %}>Mark
+            Attendance</button>
+    </form>
+    {% if already_marked %}
+    <p style="color: gold">*You have already marked your attendance for today.</p>
+    {% endif %}
+</div>
+{% endblock %}
