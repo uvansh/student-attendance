@@ -2,6 +2,7 @@ from flask import flash, Blueprint,render_template,send_file,url_for,request,red
 from models import Student,Attendance,db
 from datetime import datetime
 import calendar
+
 student_bp=Blueprint('student',__name__,url_prefix='/student')
 
 @student_bp.before_request
@@ -30,8 +31,9 @@ def require_login():
 @student_bp.route('/signin',methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
-        roll_no=request.form['roll_no']
-        password = request.form['password']
+        roll_no=request.form.get('roll_no')
+        password = request.form.get('password')
+
         student=Student.query.filter_by(roll_no=roll_no).first()
         if student and student.password==password:
             session['student_id']=student.id
@@ -39,6 +41,7 @@ def signin():
             return redirect(url_for('student.dashboard'))
         else:
             flash("Invalid Roll no or Password","danger")
+    return render_template('student_signin.html')
 @student_bp.route('/Signup')
 def signup():
     return render_template('student_signup.html')

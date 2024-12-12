@@ -27,38 +27,53 @@ ADMIN_KEY = os.getenv('ADMIN_REGISTRATION_KEY', '09075')
 @admin_bp.route('/admin_register', methods=['GET', 'POST'])
 def admin_register():
     if request.method == 'POST':
-        name = request.form['name']
-        password = request.form['password']
-        unique_key = request.form['unique_key']
+        name = request.form.get('name')
+        password = request.form.get('password')
+        unique_key = request.form.get('unique_key')
+
+        # Ensure all fields are filled
+        if not name or not password or not unique_key:
+            flash('All fields are required.', 'danger')
+            return render_template('admin_register.html')
+
         # Validate the unique key
         if unique_key != ADMIN_KEY:
             flash('Invalid unique key. Please contact staff for the correct key.', 'danger')
             return render_template('admin_register.html')
-        
+
         # Hash the password before saving
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        
-        # Register the admin
-        new_admin = Admin(name=name, password=hashed_password)
-        db.session.add(new_admin)
-        db.session.commit()
-        
-        flash('Admin account created successfully!', 'success')
-        return redirect(url_for('admin.signin'))
 
-@admin_bp.route('/signin', methods=['GET','POST'])
+        # Register the admin
+        try:
+            new_admin = Admin(name=name, password=hashed_password)
+            db.session.add(new_admin)
+            db.session.commit()
+            flash('Admin account created successfully!', 'success')
+            return redirect(url_for('admin.signin'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+            return render_template('admin_register.html')
+
+    # Handle GET requests to render the registration form
+    return render_template('admin_register.html')
+
+
+@admin_bp.route('/signin', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
         name = request.form.get('name')
         password = request.form.get('password')
-        
+
+        # Validate input
         if not name or not password:
             flash('Name and password are required', 'danger')
             return render_template('admin_signin.html')  # Always return a response
 
         # Query the admin from the database
         admin = Admin.query.filter_by(name=name).first()
-        
+
         if admin:
             # Verify the password
             if check_password_hash(admin.password, password):
@@ -66,16 +81,18 @@ def signin():
                 session['admin_id'] = admin.id
                 session['admin_name'] = admin.name
                 flash('Successfully logged in as admin', 'success')
-                return redirect(url_for('admin.dashboard'))  # Ensure you return the redirect
+                return redirect(url_for('admin.dashboard'))  # Redirect on success
             else:
                 flash('Incorrect password, please try again.', 'danger')
         else:
             flash('Admin with this name does not exist.', 'danger')
 
-        return render_template('admin_signin.html')  # Return a response in case of failure
-    
-    # For GET requests, render the login form
+        # If authentication fails, render the login page with an error message
+        return render_template('admin_signin.html')
+
+    # Handle GET requests
     return render_template('admin_signin.html')
+
 
 @admin_bp.route('/logout')
 def logout():
