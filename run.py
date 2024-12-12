@@ -3,7 +3,7 @@ from flask import render_template,request,redirect,url_for
 from admin import admin_bp
 from student import student_bp
 from models import Student,db
-
+import os
 
 app = create_app()
 
@@ -40,4 +40,5 @@ def contact():
     return render_template('contact.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)

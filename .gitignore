@@ -1,2 +1,6 @@
 .venv/
 venv/
+Dockerfile
+.dockerignore
+compose.yaml
+README.Docker.md
