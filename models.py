@@ -8,7 +8,7 @@ class Attendance(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     student_id=db.Column(db.Integer,db.ForeignKey('student.id'),nullable=False)
     date=db.Column(db.Date,default=datetime.now)
-    status= db.Column(db.String(10),nullable=False)
+    status= db.Column(db.String(10),nullable=False,default='Present')
     student = db.relationship('Student',backref='attendances')
 
 class Student(db.Model):
