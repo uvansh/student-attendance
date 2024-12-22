@@ -1,7 +1,8 @@
 from flask import flash, Blueprint,render_template,send_file,url_for,request,redirect,session,make_response
-from models import Student,Attendance,db
+from models import Student, Attendance, Contact, db
 from datetime import datetime
 import calendar
+
 
 student_bp=Blueprint('student',__name__,url_prefix='/student')
 
@@ -14,15 +15,11 @@ def require_login():
         flash('You need to sign in to access this page.', 'danger')
         return redirect(url_for('student.signin'))
 
-from flask import flash, Blueprint, render_template, send_file, url_for, request, redirect, session, make_response
-from models import Student, Attendance, db
-from datetime import datetime
-import calendar
-
 student_bp = Blueprint('student', __name__, url_prefix='/student')
 
 @student_bp.before_request
 def require_login():
+
     protected_routes = ['dashboard', 'view_attendance', 'apply_attendance']
     
     if request.endpoint in protected_routes and 'student_id' not in session:
@@ -30,6 +27,7 @@ def require_login():
         return redirect(url_for('student.signin'))
 @student_bp.route('/signin',methods=['GET', 'POST'])
 def signin():
+
     if request.method == 'POST':
         roll_no=request.form.get('roll_no')
         password = request.form.get('password')
@@ -48,6 +46,7 @@ def signup():
 
 @student_bp.route('/dashboard')
 def dashboard():
+
     if 'student_id' not in session:
         return redirect(url_for('student.signin'))
     student_id = session['student_id']
@@ -84,13 +83,13 @@ def mark_attendance():
         return redirect(url_for('student.signin'))
     
     student_id = session['student_id']
-    student = Student.query.get(student_id)
     now = datetime.now()
     today = now.date()
     
     # Check if attendance is already marked for today
     existing_attendance = Attendance.query.filter_by(student_id=student_id, date=today).first()
     if not existing_attendance:
+
         # Add attendance record
         new_attendance = Attendance(student_id=student_id, date=today)
         db.session.add(new_attendance)
@@ -111,3 +110,20 @@ def view_attendance():
 def logout():
     session.clear()
     return redirect(url_for('student.signin'))
+
+@student_bp.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+
+        # Send email to admin with the contact details
+        
+        db.session.add(Contact(name=name, email=email, message=message))
+        db.session.commit()
+        # Example: send_email('Contact Form', f'Name: {name}\nEmail: {email}\nMessage: {message}')
+        flash('Your message has been sent successfully!', 'success')
+        return redirect(url_for('student.contact'))
+    return render_template('contact.html')
+# 

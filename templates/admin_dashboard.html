@@ -5,11 +5,11 @@
 {% block content %}
 <div class="pt-3" style="width: 600px; margin-left: 20px;">
     <h1 style="color: white;">Welcome back, {{admin_name}} </h1>
-    <p style="color: white;">Here you can view your attendance, courses, and more.</p>
+    <p style="color: white;">Here you can view student's attendance, courses, and more.</p>
     <a class="btn btn-secondary" href="{{ url_for('admin.add_student') }}">Add Student</a>
 
     <a href="{{url_for('admin.logout')}}" class="btn btn-primary">Log out</a>
-    <div class="pt-3" style="width: 600px;">
+    <div class="pt-3" style="width: 600px;height: fit-content;">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -37,6 +37,34 @@
             </tbody>
         </table>
     </div>
+    <div class="pt-3" style="width: 700px;height: fit-content;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Messages</th>
+                    <th>Date</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                    <tr>
+                        <td>{{ contact.name }}</td>
+                        <td>{{ contact.message }}</td>
+                        <td>{{ contact.date }}</td>
+                        <td>{{ contact.email }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.delete_contact') }}">
+                                <input type="hidden" name="contact_id" value="{{ contact.id }}">
+                                <button type="submit" class="btn btn-danger">Resolved</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
-

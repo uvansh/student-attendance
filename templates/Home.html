@@ -3,16 +3,20 @@
 {% block content %}
 
 <div style="margin-top: 100px;">
-<div class="card rounded-0">
+  <div class="card rounded-0">
     <div class="card-body">
-        <img src="static/studentshand.jpg" class=" float-end" alt="..." style="height: 300px;">
+      <img src="static/studentshand.jpg" class=" float-end" alt="..." style="height: 300px;">
       <h5 class="card-title fs-2 pt-5">Student Attendance Management System</h5>
-      <p class="card-text pb-2">With supporting text below as a natural lead-in to additional content.</p>      
+      <p class="card-text pb-2">The Student Attendance Management System, providing a clear
+        and concise overview of its purpose and benefits.Offers additional context, guiding
+        users to explore features such as attendance tracking, reporting, and analytics. It aims to engage educators and
+        administrators, highlighting the system's efficiency and ease of use.</p>
       <a href="{{url_for('student.signup')}}" class="btn btn-primary">Sign Up</a>
       <a href="{{url_for('student.signin')}}" class="btn btn-outline-secondary">Sign In</a>
     </div>
   </div>
-  <div class="position-absolute bottom-0 end-0 p-2 align-right"><a href="{{url_for('admin.admin_register')}}" class="btn btn-dark">Admin Register</a>
-</div>
+  <div class="position-absolute bottom-0 end-0 p-2 align-right"><a href="{{url_for('admin.admin_register')}}"
+      class="btn btn-dark">Admin Register</a>
+  </div>
 </div>
 {% endblock %}

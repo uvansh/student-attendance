@@ -2,7 +2,7 @@ from flask import Blueprint,render_template,request,flash,redirect,url_for,sessi
 from models import db,Admin
 import os
 from werkzeug.security import generate_password_hash,check_password_hash
-from models import db,Admin,Student
+from models import db,Admin,Student,Contact
 
 
 admin_bp=Blueprint('admin',__name__,url_prefix='/admin')
@@ -14,7 +14,10 @@ def dashboard():
         return redirect(url_for('admin.signin'))
     admin_name=session.get('admin_name')
     students=Student.query.all()
-    response = make_response(render_template('admin_dashboard.html', admin_name=admin_name,students=students))
+
+    contacts = Contact.query.all()
+
+    response = make_response(render_template('admin_dashboard.html', admin_name=admin_name,students=students,contacts=contacts))
     # Add headers to disable caching
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # HTTP 1.1
     response.headers['Pragma'] = 'no-cache'  # HTTP 1.0
@@ -106,6 +109,7 @@ def add_student():
         name=request.form.get('name')
         roll_no=request.form.get('roll_no')
         course=request.form.get('course')
+        password=request.form.get('password')
 
         if not name or not roll_no or not course:
             flash('All fields are required', 'danger')
@@ -113,17 +117,16 @@ def add_student():
         existing_student= Student.query.filter_by(roll_no=roll_no).first()
 
         if existing_student:
-            flash('Student with this roll number already exists')
-            return redirect(url_for('add_student'))
+            flash('Student with this roll number already exists','danger')
+            return redirect(url_for('admin.add_student'))
         
-        new_student = Student(name=name,roll_no=roll_no,course=course)
+        new_student = Student(name=name,roll_no=roll_no,course=course,password=password)
         db.session.add(new_student)
         db.session.commit()
 
         flash('Student added successfully','success')
         return redirect(url_for('admin.dashboard'))
-    
-    return render_template('admin_add_student.html')
+    return render_template('add_student.html')
 
 @admin_bp.route('/remove_student/<int:student_id>',methods=['GET','POST'])
 def remove_student(student_id):
@@ -143,3 +146,15 @@ def remove_student(student_id):
 def view_students():
     students=Student.query.all()
     return render_template('admin_dashboard.html',students=students)
+
+@admin_bp.route('/delete_contact', methods=['POST'])
+def delete_contact():
+    contact_id = request.form.get('contact_id')
+    contact = Contact.query.get(contact_id)
+    if not contact:
+        flash('Contact not found', 'danger')
+        return redirect(url_for('admin.dashboard'))
+    db.session.delete(contact)
+    db.session.commit()
+    flash('Contact deleted successfully', 'success')
+    return redirect(url_for('admin.dashboard'))

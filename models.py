@@ -28,3 +28,16 @@ class Admin(db.Model):
     name=db.Column(db.String(30),nullable=False)
     password=db.Column(db.String(100),nullable=False)
     is_active=db.Column(db.Boolean,default=False)
+
+
+class Contact(db.Model):
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(30),nullable=False)
+    email=db.Column(db.String(100),unique=True,nullable=False)
+    message=db.Column(db.Text,nullable=False)
+    date=db.Column(db.DateTime,default=datetime.now)
+    def __init__(self,name,email,message):
+        self.name = name
+        self.email = email
+        self.message = message
+        self.date = datetime.now()
